@@ -1,8 +1,25 @@
+body {
+    font-size: 12px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    margin-left: 200px;
+}
+
+header {
+
+}
+
+.container {
+    height: 1000px; /* just to test pos fixed and scrolling */
+    width: 100%;
+}
+
+footer {
+
+}
 /*
 Just some styles for the ajaxbox plugin.
 Do what you want with it
 */
-
 #ajax_box_overlay {
     /*visibility: hidden;*/
     display: none;
@@ -17,8 +34,9 @@ Do what you want with it
 }
 
 .ajax_box {
-    display: none; /*block;
-    visibility: hidden;*/
+    display: none;
+    /*block;
+   visibility: hidden;*/
     position: fixed;
     /*border: 1px solid rgba(0, 0, 0, 0.3);*/
     background: #fff;
@@ -32,7 +50,6 @@ Do what you want with it
     -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
     z-index: 100;
-
 }
 
 .ajax_box_body {

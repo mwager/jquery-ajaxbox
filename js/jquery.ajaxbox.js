@@ -6,12 +6,13 @@
  * @copyright   2012, Michael Wager <mail@mwager.de>
  * @licence     http://philsturgeon.co.uk/code/dbad-license
  */
-;(function($) {
+;
+(function($) {
     // we need an overlay background
     $('body').append('<div id="ajax_box_overlay"></div>');
 
     //damn ie - opacity fix // TODOs
-    if( $('html').hasClass('lt-ie9') ){
+    if($('html').hasClass('lt-ie9')) {
         $("#ajax_box_overlay").css("filter", "progid:DXImageTransform.Microsoft.Alpha(enabled=true, opacity=40)");
     }
 
@@ -35,10 +36,12 @@
             this.options = $.extend({}, $.fn.ajaxbox.defaults, options, this.$element.data());
 
             this.href = null; //href attr of html tag
-            this.box  = null; //the ajaxbox itself
+            this.box = null; //the ajaxbox itself
 
-            //this.log('entering init');
-            //this.log(this.options, true);
+            if(options.debug) {
+                this.log('entering init');
+                this.log(this.options, true);
+            }
 
             //this.$element.off(this.options.event); //unbind first (if initialized again)
 
@@ -49,11 +52,6 @@
                 this.$element.on(this.options.event, {self: this}, this.enter);
             }
         },
-
-        /*TODO
-        destroy: function(element) {
-
-        },*/
 
         /**
          * Main entry point of event
@@ -83,12 +81,10 @@
 
             else {
                 var html = [];
-                //var width  = parseInt($this.attr('w'), 10); //TODO auto ?
-                //var height = parseInt($this.attr('h'), 10);
 
                 html.push('<div  class="ajax_box">');
-                html.push('<span class="close_button" style="left:' + (this.options.width-10) + 'px;"></span>');
-                html.push('<span class="ajax_box_loader" style="top:' + (parseInt(this.options.height, 10)/2 - 60) + 'px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+                html.push('<span class="close_button" style="left:' + (this.options.width - 10) + 'px;"></span>');
+                html.push('<span class="ajax_box_loader" style="top:' + (parseInt(this.options.height, 10) / 2 - 60) + 'px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
                 html.push('<div  class="ajax_box_body"></div>');
                 html.push('</div>');
 
@@ -102,7 +98,7 @@
                 //now put contents in body of box either from ajax response (or use iframe? TODO)
                 this.getContent();
 
-                $('body').append( this.box );
+                $('body').append(this.box);
 
                 this.box.css({
                     'width':  this.options.width,
@@ -116,8 +112,8 @@
         },
 
         //---------- plugin helpers ----------
-        showBox: function(w, h) {
-            if ($.isFunction(this.options.beforeOpen)) {
+        showBox:   function(w, h) {
+            if($.isFunction(this.options.beforeOpen)) {
                 this.options.beforeOpen.apply();
             }
 
@@ -126,16 +122,7 @@
             this.centerBox();
             this.box.show();
 
-            /* maybe some nice show effect ?
-            this.centerBox(w, h);
-
-            this.box.animate({
-                width: w,
-                height: h
-            }, 300, function() {
-
-            });
-            */
+            /* TODO maybe some nice show effect ? */
         },
 
         closeBox: function() {
@@ -145,7 +132,7 @@
                 this.box = null;
             }
 
-            if ($.isFunction(this.options.afterClose)) {
+            if($.isFunction(this.options.afterClose)) {
                 this.options.afterClose.apply();
             }
         },
@@ -155,9 +142,9 @@
          */
         centerBox: function() {
             var left = ($(window).width() - this.box.outerWidth()) / 2;
-            var top  = ($(window).height() - this.box.outerHeight()) / 2;
+            var top = ($(window).height() - this.box.outerHeight()) / 2;
             this.box.css({
-                top:  (top  > 0 ? top : 0)  + 'px',
+                top:  (top > 0 ? top : 0) + 'px',
                 left: (left > 0 ? left : 0) + 'px'
             });
         },
@@ -181,12 +168,14 @@
             });
         },
 
+        /**
+         * simple log helper
+         * @param s
+         * @param raw
+         */
         log: function(s, raw) {
-            if(console) {
-               if(raw)
-                   console.log(s);
-               else
-                   console.log('[ajaxbox] ' + s);
+            if(window.console && console.log) {
+                console.log(raw ? s : '[ajaxbox] ' + s);
             }
         },
 
@@ -199,11 +188,11 @@
 
             var url = this.options.url ? this.options.url : self.href;
             $.ajax({
-                type:       "POST", // TODO !? configurable !
-                dataType:   "html",
-                url:        url,
-                data:       {},
-                success: function(html) {
+                type:     "POST", // TODO !? configurable !
+                dataType: "html",
+                url:      url,
+                data:     {},
+                success:  function(html) {
                     self.box.find('.ajax_box_body').html(html); //BAAM
                     self.box.find('.ajax_box_loader').remove(); //not needed anymore
 
@@ -211,7 +200,7 @@
                         self.options.onContentLoaded.apply();
                     }
                 },
-                error: function(request, textStat, thrown) {
+                error:    function(request, textStat, thrown) {
                     self.box = null; //destroy this box, so it gets loaded again next time
                     $.error('ajax error callback - something went wrong... is the link pointing to the same domain?');
                 }
@@ -219,11 +208,11 @@
         }
     };
 
-     $.fn.ajaxbox = function(option) {
+    $.fn.ajaxbox = function(option) {
         return this.each(function() {
             var $this = $(this),
-                //data = $this.data('ajaxbox'),
-                options = typeof option == 'object' && option;
+            //data = $this.data('ajaxbox'),
+            options = typeof option == 'object' && option;
 
             //if (!data)
             //    $this.data('ajaxbox', (data = new Ajaxbox(this, options)));
@@ -235,13 +224,13 @@
     $.fn.ajaxbox.Constructor = Ajaxbox;
 
     $.fn.ajaxbox.defaults = {
-        width:              400,
-        height:             200,
-        event:              'click',    //default click
-        sel:                null,
-        beforeOpen:         null,       //callback function
-        afterClose:         null,       //callback function
-        onContentLoaded:    null,       //callback function
-        debug:              false       //debugging, show some messages in console if this is true
+        width:           400,
+        height:          200,
+        event:           'click', // default click
+        sel:             null,
+        beforeOpen:      null, // callback function
+        afterClose:      null, // callback function
+        onContentLoaded: null, // callback function
+        debug:           false // debugging, show some messages in console if this is true
     };
 }(window.jQuery));
