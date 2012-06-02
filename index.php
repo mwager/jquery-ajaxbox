@@ -54,7 +54,6 @@ if (IS_AJAX) {
     <pre id="log"></pre>
 
     <h2>docs</h2>
-
     <p>view source</p>
 </div>
 
@@ -78,7 +77,6 @@ if (IS_AJAX) {
             });
 
             $('#demo3').ajaxbox({
-                debug:           true, // add some debug output
                 beforeOpen:      function() {
                     log('beforeOpen callback');
                 },
@@ -91,6 +89,7 @@ if (IS_AJAX) {
             });
 
             $('body').ajaxbox({
+                debug: true, // add some debug output
                 sel:        '.ajaxbox',
                 afterClose: function() {
                     log('afterClose callback');

@@ -8,13 +8,8 @@
  */
 ;
 (function($) {
-    // we need an overlay background
+    // we need an overlay background only once
     $('body').append('<div id="ajax_box_overlay"></div>');
-
-    //damn ie - opacity fix // TODOs
-    if($('html').hasClass('lt-ie9')) {
-        $("#ajax_box_overlay").css("filter", "progid:DXImageTransform.Microsoft.Alpha(enabled=true, opacity=40)");
-    }
 
     var Ajaxbox = function(element, options) {
         this.init(element, options);
@@ -84,7 +79,7 @@
 
                 html.push('<div  class="ajax_box">');
                 html.push('<span class="close_button" style="left:' + (this.options.width - 10) + 'px;"></span>');
-                html.push('<span class="ajax_box_loader" style="top:' + (parseInt(this.options.height, 10) / 2 - 60) + 'px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+                html.push('<span class="ajax_box_loader" style="top:' + (parseInt(this.options.height, 10) / 2 - 60) + 'px;"></span>');
                 html.push('<div  class="ajax_box_body"></div>');
                 html.push('</div>');
 
@@ -113,27 +108,27 @@
 
         //---------- plugin helpers ----------
         showBox:   function(w, h) {
-            if($.isFunction(this.options.beforeOpen)) {
-                this.options.beforeOpen.apply();
-            }
+            $.isFunction(this.options.beforeOpen) && this.options.beforeOpen.apply();
 
             $('#ajax_box_overlay').show();
 
             this.centerBox();
             this.box.show();
 
-            /* TODO maybe some nice show effect ? */
+            /* TODO show effect ? */
         },
 
         closeBox: function() {
+            if(this.options.debug)
+                this.log('closeBox()');
+
             $('#ajax_box_overlay').hide();
+
             if(this.box) {
                 this.box.remove();
                 this.box = null;
-            }
 
-            if($.isFunction(this.options.afterClose)) {
-                this.options.afterClose.apply();
+                $.isFunction(this.options.afterClose) && this.options.afterClose.apply();
             }
         },
 
@@ -155,7 +150,11 @@
         makeClosable: function() {
             var self = this;
 
-            $('#ajax_box_overlay, .close_button').on('click', function() {
+            $('#ajax_box_overlay').on('click', function() {
+                self.closeBox();
+            });
+
+            this.box.find('.close_button').on('click', function() {
                 self.closeBox();
             });
 
@@ -196,9 +195,8 @@
                     self.box.find('.ajax_box_body').html(html); //BAAM
                     self.box.find('.ajax_box_loader').remove(); //not needed anymore
 
-                    if($.isFunction(self.options.onContentLoaded)) {
-                        self.options.onContentLoaded.apply();
-                    }
+                    $.isFunction(self.options.onContentLoaded) && self.options.onContentLoaded.apply();
+
                 },
                 error:    function(request, textStat, thrown) {
                     self.box = null; //destroy this box, so it gets loaded again next time
@@ -211,8 +209,8 @@
     $.fn.ajaxbox = function(option) {
         return this.each(function() {
             var $this = $(this),
-            //data = $this.data('ajaxbox'),
-            options = typeof option == 'object' && option;
+                // data = $this.data('ajaxbox'),
+                options = typeof option == 'object' && option;
 
             //if (!data)
             //    $this.data('ajaxbox', (data = new Ajaxbox(this, options)));
@@ -227,7 +225,7 @@
         width:           400,
         height:          200,
         event:           'click', // default click
-        sel:             null,
+        sel:             null, // optional selector to support "live" binding
         beforeOpen:      null, // callback function
         afterClose:      null, // callback function
         onContentLoaded: null, // callback function
