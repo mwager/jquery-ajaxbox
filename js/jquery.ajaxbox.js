@@ -6,10 +6,11 @@
  * @copyright   2012, Michael Wager <mail@mwager.de>
  * @licence     http://philsturgeon.co.uk/code/dbad-license
  */
-;
-(function($) {
+;(function($) {
     // we need an overlay background only once
     $('body').append('<div id="ajax_box_overlay"></div>');
+
+    var ajax_box_overlay = $('#ajax_box_overlay');
 
     var Ajaxbox = function(element, options) {
         this.init(element, options);
@@ -110,23 +111,25 @@
         showBox:   function(w, h) {
             $.isFunction(this.options.beforeOpen) && this.options.beforeOpen.apply();
 
-            $('#ajax_box_overlay').show();
-
+            ajax_box_overlay.fadeIn(300);
             this.centerBox();
-            this.box.show();
+            this.box.fadeIn(300);
 
             /* TODO show effect ? */
         },
 
         closeBox: function() {
-            if(this.options.debug)
-                this.log('closeBox()');
+            var self = this;
 
-            $('#ajax_box_overlay').hide();
+            if(self.options.debug)
+                self.log('closeBox()');
 
-            if(this.box) {
-                this.box.remove();
-                this.box = null;
+            if(self.box) {
+                self.box.fadeOut(300, function() {
+                    ajax_box_overlay.fadeOut(300);
+                    self.box.remove();
+                    self.box = null;
+                });
 
                 $.isFunction(this.options.afterClose) && this.options.afterClose.apply();
             }
@@ -138,6 +141,7 @@
         centerBox: function() {
             var left = ($(window).width() - this.box.outerWidth()) / 2;
             var top = ($(window).height() - this.box.outerHeight()) / 2;
+
             this.box.css({
                 top:  (top > 0 ? top : 0) + 'px',
                 left: (left > 0 ? left : 0) + 'px'
@@ -150,7 +154,8 @@
         makeClosable: function() {
             var self = this;
 
-            $('#ajax_box_overlay').on('click', function() {
+            ajax_box_overlay.on('click', function() {
+                ajax_box_overlay.off('click');
                 self.closeBox();
             });
 
@@ -168,17 +173,6 @@
         },
 
         /**
-         * simple log helper
-         * @param s
-         * @param raw
-         */
-        log: function(s, raw) {
-            if(window.console && console.log) {
-                console.log(raw ? s : '[ajaxbox] ' + s);
-            }
-        },
-
-        /**
          * Get content of ajaxbox via ajax. Only html is accepted.
          * On success we fill the body of the box.
          */
@@ -187,7 +181,7 @@
 
             var url = this.options.url ? this.options.url : self.href;
             $.ajax({
-                type:     "POST", // TODO !? configurable !
+                type:     "GET", // POST
                 dataType: "html",
                 url:      url,
                 data:     {},
@@ -203,14 +197,25 @@
                     $.error('ajax error callback - something went wrong... is the link pointing to the same domain?');
                 }
             });
+        },
+
+        /**
+         * simple log helper
+         * @param s
+         * @param raw
+         */
+        log: function(s, raw) {
+            if(window.console && console.log) {
+                console.log(raw ? s : '[ajaxbox] ' + s);
+            }
         }
     };
 
     $.fn.ajaxbox = function(option) {
         return this.each(function() {
             var $this = $(this),
-                // data = $this.data('ajaxbox'),
-                options = typeof option == 'object' && option;
+            // data = $this.data('ajaxbox'),
+                    options = typeof option == 'object' && option;
 
             //if (!data)
             //    $this.data('ajaxbox', (data = new Ajaxbox(this, options)));

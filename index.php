@@ -4,10 +4,10 @@ define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVE
 // can be anything ...
 if (IS_AJAX) {
     echo
-    "<b>content for ajaxbox !<br />new line<br />new line<br />new line<br />new line<br />new line<br />
+    "<b>content for ajaxbox !</b><br />new line<br />new line<br />new line<br />new line<br />new line<br />
     new line<br />new line<br />new line<br />new line<br />new line<br />new line<br />new line<br />new line<br />
     new line<br />new line<br />new line<br />new line<br />new line<br />new line<br />new line<br />new line<br />
-    new line<br />new line</b>";
+    new line<br />new line";
 
     exit();
 }
