@@ -7,9 +7,12 @@
  * @licence     http://philsturgeon.co.uk/code/dbad-license
  */
 ;(function($) {
+    'use strict'
+
     // we need an overlay background only once
     $('body').append('<div id="ajax_box_overlay"></div>');
 
+    // const
     var ajax_box_overlay = $('#ajax_box_overlay');
 
     var Ajaxbox = function(element, options) {
@@ -17,12 +20,10 @@
     };
 
     Ajaxbox.prototype = {
-
         constructor: Ajaxbox,
 
         /**
          * Init member variables and bind event
-         *
          *
          * @param string element - the element on which we bind the event
          * @param object options - options of plugin
@@ -31,15 +32,11 @@
             this.$element = $(element);
             this.options = $.extend({}, $.fn.ajaxbox.defaults, options, this.$element.data());
 
-            this.href = null; //href attr of html tag
-            this.box = null; //the ajaxbox itself
+            this.href = null; // href attr of html tag
+            this.box = null; // the ajaxbox itself
 
-            if(options.debug) {
-                this.log('entering init');
-                this.log(this.options, true);
-            }
-
-            //this.$element.off(this.options.event); //unbind first (if initialized again)
+            this.log('entering init');
+            this.log(this.options, true);
 
             if(this.options.sel) {
                 this.$element.on(this.options.event, this.options.sel, {self: this}, this.enter);
@@ -86,7 +83,7 @@
 
                 html = html.join('');
 
-                //log(html);
+                //this.log(html);
 
                 //save box object
                 this.box = $(html);
@@ -114,15 +111,12 @@
             ajax_box_overlay.fadeIn(300);
             this.centerBox();
             this.box.fadeIn(300);
-
-            /* TODO show effect ? */
         },
 
         closeBox: function() {
             var self = this;
 
-            if(self.options.debug)
-                self.log('closeBox()');
+            self.log('closeBox()');
 
             if(self.box) {
                 self.box.fadeOut(300, function() {
@@ -180,6 +174,9 @@
             var self = this;
 
             var url = this.options.url ? this.options.url : self.href;
+
+            self.log('getContent() URL: ' + url);
+
             $.ajax({
                 type:     "GET", // POST
                 dataType: "html",
@@ -205,7 +202,7 @@
          * @param raw
          */
         log: function(s, raw) {
-            if(window.console && console.log) {
+            if(this.options.debug && window.console && console.log) {
                 console.log(raw ? s : '[ajaxbox] ' + s);
             }
         }
@@ -229,11 +226,12 @@
     $.fn.ajaxbox.defaults = {
         width:           400,
         height:          200,
-        event:           'click', // default click
+        event:           'click', // show event - default click
         sel:             null, // optional selector to support "live" binding
+        url:             null, // optional url, if null href attr is used
         beforeOpen:      null, // callback function
         afterClose:      null, // callback function
         onContentLoaded: null, // callback function
-        debug:           false // debugging, show some messages in console if this is true
+        debug:           false // debugging, log some messages to the console if set to true
     };
 }(window.jQuery));

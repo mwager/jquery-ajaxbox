@@ -47,13 +47,18 @@ if (IS_AJAX) {
         </li>
 
         <li>
-            <a class="ajaxbox" href="index.php">demo3 (live)</a>
+            <a id="demo4" href="#">demo4 (custom url)</a>
+        </li>
+
+        <li>
+            <a class="ajaxbox" href="index.php">demo5 (live)</a>
         </li>
     </ul>
 
     <pre id="log"></pre>
 
     <h2>docs</h2>
+
     <p>view source</p>
 </div>
 
@@ -88,8 +93,13 @@ if (IS_AJAX) {
                 }
             });
 
+            $('#demo4').ajaxbox({
+                debug: true,
+                url:   'test.php' // custom URL
+            });
+
             $('body').ajaxbox({
-                debug: true, // add some debug output
+                debug:      true, // add some debug output
                 sel:        '.ajaxbox',
                 afterClose: function() {
                     log('afterClose callback');
