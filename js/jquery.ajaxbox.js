@@ -108,7 +108,7 @@
         showBox:   function(w, h) {
             $.isFunction(this.options.beforeOpen) && this.options.beforeOpen.apply();
 
-            ajax_box_overlay.fadeIn(100);
+            ajax_box_overlay.show(); // fadeIn(100);
 
             this.centerBox();
             this.box.fadeIn(300);
