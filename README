@@ -1,5 +1,10 @@
 This is a simple jQuery plugin which opens a window on a page and puts in some ajax'd content.
 
 INSTALL
-------
+-------
 clone and see index.php for some examples
+
+TODO
+-------
+- support iframes instead of ajax too
+- image gallery support ?
