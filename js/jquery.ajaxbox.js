@@ -9,13 +9,17 @@
 ;(function($) {
     'use strict'
 
-    // we need an overlay background only once
-    $('body').append('<div id="ajax_box_overlay"></div>');
-
     // const
-    var ajax_box_overlay = $('#ajax_box_overlay');
+    var ajax_box_overlay;
 
     var Ajaxbox = function(element, options) {
+
+        // we need an overlay background only once
+        if($('#ajax_box_overlay').length === 0) {
+            $('body').append('<div id="ajax_box_overlay"></div>');
+            ajax_box_overlay = $('#ajax_box_overlay');
+        }
+
         this.init(element, options);
     };
 
@@ -187,7 +191,7 @@
                     self.box.find('.ajax_box_body').html(html); //BAAM
                     self.box.find('.ajax_box_loader').remove(); //not needed anymore
 
-                    $.isFunction(self.options.onContentLoaded) && self.options.onContentLoaded.apply();
+                    $.isFunction(self.options.onContentLoaded) && self.options.onContentLoaded(html);
 
                 },
                 error:    function(request, textStat, thrown) {
