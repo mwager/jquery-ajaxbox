@@ -58,8 +58,10 @@ if (IS_AJAX) {
     <pre id="log"></pre>
 
     <h2>docs</h2>
-
     <p>view source</p>
+
+    <h2>QUnit Tests</h2>
+    <a href="test">click</a>
 </div>
 
 <footer>
