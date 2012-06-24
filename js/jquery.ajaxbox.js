@@ -6,7 +6,8 @@
  * @copyright   2012, Michael Wager <mail@mwager.de>
  * @licence     http://philsturgeon.co.uk/code/dbad-license
  */
-;(function($) {
+;
+(function($) {
     'use strict'
 
     // const
@@ -14,7 +15,7 @@
 
     var Ajaxbox = function(element, options) {
 
-        // we need an overlay background only once
+        // background overlay only once
         if($('#ajax_box_overlay').length === 0) {
             $('body').append('<div id="ajax_box_overlay"></div>');
             ajax_box_overlay = $('#ajax_box_overlay');
@@ -75,12 +76,11 @@
             if(this.box && this.box.length > 0) {
                 this.showBox();
             }
-
             else {
                 var html = [];
 
                 html.push('<div  class="ajax_box">');
-                html.push('<span class="close_button" style="left:' + (this.options.width - 10) + 'px;"></span>');
+                html.push('<span class="ajax_box_close_button" style="left:' + (this.options.width - 10) + 'px;"></span>');
                 html.push('<span class="ajax_box_loader" style="top:' + (parseInt(this.options.height, 10) / 2 - 60) + 'px;"></span>');
                 html.push('<div  class="ajax_box_body"></div>');
                 html.push('</div>');
@@ -93,7 +93,12 @@
                 this.box = $(html);
 
                 //now put contents in body of box either from ajax response (or use iframe? TODO)
-                this.getContent();
+                if(this.options.content === null) {
+                    this.getContentViaAjax();
+                }
+                else {
+                    this.putContent(this.options.content);
+                }
 
                 $('body').append(this.box);
 
@@ -130,7 +135,7 @@
                     self.box = null;
                 });
 
-                $.isFunction(this.options.afterClose) && this.options.afterClose.apply();
+                $.isFunction(self.options.afterClose) && self.options.afterClose.apply();
             }
         },
 
@@ -158,7 +163,7 @@
                 self.closeBox();
             });
 
-            this.box.find('.close_button').on('click', function() {
+            self.box.find('.ajax_box_close_button').on('click', function() {
                 self.closeBox();
             });
 
@@ -172,15 +177,27 @@
         },
 
         /**
+         * put content in the box. either via ajax or via options.content
+         * @param string content
+         */
+        putContent: function(content) {
+            this.box.find('.ajax_box_body').html(content);
+            this.box.find('.ajax_box_loader').remove();
+
+            $.isFunction(this.options.onContentLoaded) && this.options.onContentLoaded(content);
+        },
+
+
+        /**
          * Get content of ajaxbox via ajax. Only html is accepted.
          * On success we fill the body of the box.
          */
-        getContent: function() {
+        getContentViaAjax: function() {
             var self = this;
 
-            var url = this.options.url ? this.options.url : self.href;
+            var url = this.options.url ? this.options.url : this.href;
 
-            self.log('getContent() URL: ' + url);
+            self.log('getContentViaAjax() URL: ' + url);
 
             $.ajax({
                 type:     "GET", // POST
@@ -188,10 +205,7 @@
                 url:      url,
                 data:     {},
                 success:  function(html) {
-                    self.box.find('.ajax_box_body').html(html); //BAAM
-                    self.box.find('.ajax_box_loader').remove(); //not needed anymore
-
-                    $.isFunction(self.options.onContentLoaded) && self.options.onContentLoaded(html);
+                    self.putContent(html);
 
                 },
                 error:    function(request, textStat, thrown) {
@@ -231,6 +245,7 @@
     $.fn.ajaxbox.defaults = {
         width:           400,
         height:          200,
+        content:         null, // custom content, no ajax
         event:           'click', // show event - default click
         sel:             null, // optional selector to support "live" binding
         url:             null, // optional url, if null href attr is used

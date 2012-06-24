@@ -1,13 +1,14 @@
 /**
- * jQuery-ajaxbox QUnit Tests
+ * jquery-ajaxbox QUnit Tests
  *
  * @author Michael Wager
  */
 
 module('jquery-ajaxbox');
+
 asyncTest("jquery-ajaxbox", function() {
 
-    //expect(11);
+    expect(15);
 
     ok(! ! jQuery().ajaxbox, "ajaxbox present");
 
@@ -23,7 +24,7 @@ asyncTest("jquery-ajaxbox", function() {
         afterClose:      function() {
             ok(! ! true, 'afterClose callback success');
         },
-        // after content loaded via ajax
+        // after content loaded
         onContentLoaded: function() {
             start();
             ok(! ! true, 'onContentLoaded callback success');
@@ -38,12 +39,12 @@ asyncTest("jquery-ajaxbox", function() {
     ok($('#ajax_box_overlay').is(':visible'), 'overlay visible');
     ok($('.ajax_box').length > 0, '.ajax_box present');
     ok($('.ajax_box_body').length > 0, '.ajax_box_body present');
-    ok($('.close_button').length > 0, '.close_button present');
+    ok($('.ajax_box_close_button').length > 0, '.ajax_box_close_button present');
 
     ok($('.ajax_box').width() === 400, 'width');
     ok($('.ajax_box').height() === 200, 'height');
 
-    $('.close_button').trigger('click');
+    $('.ajax_box_close_button').trigger('click');
 
     // demo 2 custom url
     $('#demo2').ajaxbox({
@@ -56,5 +57,15 @@ asyncTest("jquery-ajaxbox", function() {
     });
 
     $('#demo2').trigger('click');
-    $('.close_button').trigger('click');
+    $('.ajax_box_close_button').trigger('click');
+
+
+    // demo 3 custom content instead of ajax
+    $('#demo3').ajaxbox({
+        content: '<div id="custom">Custom <strong>content</strong></div>'
+    });
+
+    $('#demo3').trigger('click');
+    ok($('#custom').length > 0, 'custom content present');
+    $('.ajax_box_close_button').trigger('click');
 });
