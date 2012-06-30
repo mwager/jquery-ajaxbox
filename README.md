@@ -8,5 +8,6 @@ clone and see index.php for some examples
 
 ## TODO
 
-* support iframes instead of ajax too ?
+* support iframes and custom content instead of ajax too ?
 * image gallery support ?
+* amd support
