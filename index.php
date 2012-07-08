@@ -53,11 +53,20 @@ if (IS_AJAX) {
         <li>
             <a class="ajaxbox" href="index.php">demo5 (live)</a>
         </li>
+
+        <li>
+            <a id="demo6" href="#">demo6 (custom content)</a>
+        </li>
+
+        <li>
+            <a id="demo7" href="#">demo7 (server error)</a>
+        </li>
     </ul>
 
     <pre id="log"></pre>
 
     <h2>docs</h2>
+
     <p>view source</p>
 
     <h2>QUnit Tests</h2>
@@ -68,7 +77,7 @@ if (IS_AJAX) {
     &copy; Michael Wager
 </footer>
 
-<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript" src="js/jquery.ajaxbox.js"></script>
 <script type="text/javascript">
     (function() {
@@ -107,6 +116,15 @@ if (IS_AJAX) {
                     log('afterClose callback');
                     demolinks.append('<li><a class="ajaxbox" href="index.php">harhar click me again</a></li>');
                 }
+            });
+
+            $('#demo6').ajaxbox({
+                content: '<div>hello world</div>' // custom content
+            });
+
+            $('#demo7').ajaxbox({
+                debug: true,
+                url:   'broken.php'
             });
         });
 

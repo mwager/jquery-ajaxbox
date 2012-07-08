@@ -6,9 +6,8 @@
  * @copyright   2012, Michael Wager <mail@mwager.de>
  * @licence     http://philsturgeon.co.uk/code/dbad-license
  */
-;
-(function($) {
-    'use strict'
+;(function($) {
+    'use strict';
 
     // const
     var ajax_box_overlay;
@@ -206,11 +205,11 @@
                 data:     {},
                 success:  function(html) {
                     self.putContent(html);
-
                 },
                 error:    function(request, textStat, thrown) {
-                    self.box = null; //destroy this box, so it gets loaded again next time
-                    $.error('ajax error callback - something went wrong... is the link pointing to the same domain?');
+                    var html = ['[AJAX ERROR]<br/> Status: ' + request.status + '<br/>', 'Status-Text: ' + request.statusText + '<br/>'];
+                    self.log(thrown);
+                    self.putContent(html.join(''));
                 }
             });
         },
