@@ -253,4 +253,10 @@
         onContentLoaded: null, // callback function
         debug:           false // debugging, log some messages to the console if set to true
     };
+    
+    if(typeof define === "function" && define.amd) {
+        define("ajaxbox", [], function() {
+            return $.ajaxbox;
+        });
+    }
 }(window.jQuery));
