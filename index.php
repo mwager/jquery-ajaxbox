@@ -122,6 +122,15 @@ if (IS_AJAX) {
                 content: '<div>hello world</div>' // custom content
             });
 
+
+            // auto open
+            $().ajaxbox({
+                debug:   true,
+                content: '<div>hello world</div>', // custom content
+                width: 280,
+                height: 200
+            });
+
             $('#demo7').ajaxbox({
                 debug: true,
                 url:   'broken.php'

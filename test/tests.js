@@ -50,7 +50,7 @@ asyncTest("jquery-ajaxbox", function() {
     $('#demo2').ajaxbox({
         url:             '../test.php', // custom URL
         onContentLoaded: function(html) {
-            ok(html, 'returned html from custom url');
+            ok(html !== undefined, 'returned html from custom url');
 
             start();
         }

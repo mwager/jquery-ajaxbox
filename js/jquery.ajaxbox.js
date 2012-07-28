@@ -1,12 +1,12 @@
 /*global window: true, document: true, $: true, jQuery: true, console: true*/
-
 /**
  * simple jQuery ajaxbox plugin v0.3
  *
  * @copyright   2012, Michael Wager <mail@mwager.de>
  * @licence     http://philsturgeon.co.uk/code/dbad-license
  */
-;(function($) {
+;
+(function($) {
     'use strict';
 
     // const
@@ -32,13 +32,20 @@
          * @param string element - the element on which we bind the event
          * @param object options - options of plugin
          */
-        init: function(element, options) {
+        init:  function(element, options) {
             this.$element = $(element);
-            this.options = $.extend({}, $.fn.ajaxbox.defaults, options, this.$element.data());
+
+            // auto open
+            if(element === null) {
+                this.options = $.extend({}, $.fn.ajaxbox.defaults, options);
+                this.enter({data: {self: this}});
+                return;
+            }
 
             this.href = null; // href attr of html tag
             this.box = null; // the ajaxbox itself
 
+            this.options = $.extend({}, $.fn.ajaxbox.defaults, options, this.$element.data());
             this.log('entering init');
             this.log(this.options, true);
 
@@ -49,7 +56,6 @@
                 this.$element.on(this.options.event, {self: this}, this.enter);
             }
         },
-
         /**
          * Main entry point of event
          *
@@ -63,6 +69,22 @@
             self.createBox($(this));
 
             return false;
+        },
+
+        /**
+         * unbind events, cleanup
+         */
+        off: function() {
+            if(this.options.sel) {
+                this.$element.off(this.options.event, this.options.sel);
+            }
+            else {
+                this.$element.off(this.options.event);
+            }
+            this.box !== null && this.box.remove();
+            this.box = null;
+            this.href = null;
+            this.options = null;
         },
 
         /**
@@ -91,7 +113,7 @@
                 //save box object
                 this.box = $(html);
 
-                //now put contents in body of box either from ajax response (or use iframe? TODO)
+                //now put contents in body of box either from ajax response (or use iframe? )
                 if(this.options.content === null) {
                     this.getContentViaAjax();
                 }
@@ -114,7 +136,8 @@
 
         //---------- plugin helpers ----------
         showBox:   function(w, h) {
-            $.isFunction(this.options.beforeOpen) && this.options.beforeOpen.apply();
+            if($.isFunction(this.options.beforeOpen))
+                this.options.beforeOpen.call(this);
 
             ajax_box_overlay.show(); // fadeIn(100);
 
@@ -134,7 +157,8 @@
                     self.box = null;
                 });
 
-                $.isFunction(self.options.afterClose) && self.options.afterClose.apply();
+                if($.isFunction(this.options.afterClose))
+                    this.options.afterClose.call(this);
             }
         },
 
@@ -183,7 +207,8 @@
             this.box.find('.ajax_box_body').html(content);
             this.box.find('.ajax_box_loader').remove();
 
-            $.isFunction(this.options.onContentLoaded) && this.options.onContentLoaded(content);
+            if($.isFunction(this.options.onContentLoaded))
+                this.options.onContentLoaded.call(this, content);
         },
 
 
@@ -227,6 +252,12 @@
     };
 
     $.fn.ajaxbox = function(option) {
+        if(this.length === 0) {
+            var options = typeof option == 'object' && option;
+            new Ajaxbox(null, options);
+            return;
+        }
+
         return this.each(function() {
             var $this = $(this),
             // data = $this.data('ajaxbox'),
@@ -253,10 +284,4 @@
         onContentLoaded: null, // callback function
         debug:           false // debugging, log some messages to the console if set to true
     };
-    
-    if(typeof define === "function" && define.amd) {
-        define("ajaxbox", [], function() {
-            return $.ajaxbox;
-        });
-    }
 }(window.jQuery));
