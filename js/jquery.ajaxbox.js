@@ -62,6 +62,7 @@
          * @param object event - event thrown over here in jQuery's on()
          */
         enter: function(event) {
+
             var self = event.data.self;
 
             self.href = $(this).attr('href');
